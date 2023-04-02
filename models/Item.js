@@ -58,6 +58,9 @@ const ItemSchema = new Schema({
 		required: true,
 	},
 	ratings: [RatingSchema],
+	image: {
+		type: String,
+	}
 }, { timestamps: true });
 
 module.exports = mongoose.model('Item', ItemSchema);
