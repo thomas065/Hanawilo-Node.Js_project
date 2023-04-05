@@ -143,7 +143,7 @@ const getItemRating = async (req, res, next) => {
     try {
         const item = await Item.findById(req.params.itemId);
         let rating = item.ratings.find(rating =>
-            req.params.ratingId.equal(rating._id)
+            rating._id.equals(req.params.ratingId)
         );
 
         if (!rating)
@@ -163,8 +163,9 @@ const updateItemRating = async (req, res, next) => {
     try {
         const item = await Item.findById(req.params.itemId);
         let rating = item.ratings.find(rating =>
-            req.params.ratingId.equal(rating._id)
+            rating._id.equals(req.params.ratingId)
         );
+        1;
 
         if (!rating) {
             const ratingIndexPosition = item.ratings.indexOf(rating);
@@ -188,13 +189,15 @@ const deleteItemRating = async (req, res, next) => {
     try {
         const item = await Item.findById(req.params.itemId);
         let rating = item.ratings.find(rating =>
-            req.params.ratingId.equal(rating._id)
+            rating._id.equals(req.params.ratingId)
         );
 
         if (!rating) {
             const ratingIndexPosition = item.ratings.indexOf(rating);
             item.ratings.splice(ratingIndexPosition, 1);
-            rating = {message: `Rating with id: ${req.params.ratingId} has been deleted`};
+            rating = {
+                message: `Rating with id: ${req.params.ratingId} has been deleted`,
+            };
             await item.save();
         } else {
             rating = {
@@ -211,25 +214,26 @@ const deleteItemRating = async (req, res, next) => {
 
 const postItemImage = async (req, res, next) => {
     try {
-        const err = {message: `Error uploading image`};
-        if (!req.files) next(err)
+        const err = { message: `Error uploading image` };
+        if (!req.files) next(err);
 
         const file = req.files.file;
 
-        if (!file.mimetype.startsWith('image')) next(err)
-        if (file.size > process.env.MAX_FILE_SIZE) next(err)
+        if (!file.mimetype.startsWith('image')) next(err);
+        if (file.size > process.env.MAX_FILE_SIZE) next(err);
 
         file.name = `photo_${req.params.itemId}${path.parse(file.name).ext}`;
 
         const filePath = process.env.FILE_UPLOAD_PATH + file.name;
 
         file.mv(filePath, async err => {
-            await item.findByIdAndUpdate(req.params.itemId, { image: file.name });
+            await item.findByIdAndUpdate(req.params.itemId, {
+                image: file.name,
+            });
             res.status(200)
                 .setHeader('Content-Type', 'application/json')
                 .json({ message: 'Image uploaded!' });
-        })
-
+        });
     } catch (err) {
         next(err);
     }
