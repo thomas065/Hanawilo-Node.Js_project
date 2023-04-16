@@ -8,7 +8,6 @@ const {
     putUser,
     deleteUser,
     login,
-    login,
     forgotPassword,
     resetPassword,
     updatePassword,
