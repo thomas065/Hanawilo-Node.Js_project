@@ -11,6 +11,14 @@ const connectDB = require('./config/db');
 const fileupload = require('express-fileupload');
 const cookieParser = require('cookie-parser');
 
+const mongoSanitize = require('express-mongo-sanitize');
+const helmet = require('helmet')
+const xss = require('xss-clean');
+const hpp = require('hpp');
+const rateLimit = require('express-rate-limit');
+const cors = require('cors');
+
+
 // path where to read the config.env file
 dotenv.config({ path: './config/config.env' });
 
@@ -24,10 +32,25 @@ const app = express();
 app.use(bodyParser.json());
 app.use(fileupload());
 app.use(cookieParser());
+app.use(mongoSanitize());
+app.use(xss());
+app.use(hpp())
+app.use(helmet());
 
 // middleware
 app.use(logger);
 app.use(errorHandler);
+
+const limiter = rateLimit({
+    windowMs: 10 * 60 * 1000, // 10 minutes
+    max: 100
+});
+
+app.use(limiter);
+
+app.use(cors({
+    origin: '*'
+}));
 
 // routes
 app.use('/category', category);
