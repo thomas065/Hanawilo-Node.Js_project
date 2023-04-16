@@ -7,7 +7,7 @@
         "node": ">=14.20.1"
     },
     "scripts": {
-        "dev": "nodemon server.js"
+        "start": "nodemon server.js"
     },
     "keywords": [],
     "author": "Thomas Bell",
